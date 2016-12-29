@@ -11,7 +11,8 @@ https://github.com/underchemist/nanonispy
 
 invoke a bokeh server using either "all_file_viewer" or "single_file_viewer":
 
-from terminal:
->> bokeh serve --show all_file all_file_viewer.py
+from your terminal:
+-> bokeh serve --show all_file all_file_viewer.py
+
 or, as another example:
->>bokeh serve --port 5007 single_file_viewer.py --log-level=debug
+-> bokeh serve --port 5007 single_file_viewer.py --log-level=debug
