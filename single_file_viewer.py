@@ -22,6 +22,8 @@ widgets = cf.column(
                     cf.apply_filters_menu, 
                     cf.color_palette_menu, 
                     cf.update_button,
+                    cf.max_slider, 
+                    cf.min_slider,
                     )
 main_row = cf.row(cf.p, widgets, cf.header_display)
 layout = cf.column(main_row)

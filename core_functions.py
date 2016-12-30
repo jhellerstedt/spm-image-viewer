@@ -71,6 +71,12 @@ global file_metadata_dict
 file_metadata_dict = dict()
 global enable_grid_view
 enable_grid_view = True
+global contrast_high, contrast_low, first_update, max_slider_initial, min_slider_initial
+max_slider_initial = 1
+min_slider_initial = 1
+first_update = False
+contrast_high = -1e9
+contrast_low = 1e9
 
 ### populate palettes dictionary from matplotlib
 
@@ -78,7 +84,7 @@ palette_list = sorted(m for m in plt.cm.datad) # if not m.endswith("_r"))
 ## initialize colomapper variable to default of Blues_r
 colormap = plt.get_cmap("Blues_r") #choose any matplotlib colormap here
 bokehpalette = [rgb2hex(m) for m in colormap(np.arange(colormap.N))]
-colormapper = LinearColorMapper(palette=bokehpalette)
+colormapper = LinearColorMapper(palette=bokehpalette, high=contrast_high, low=contrast_low)
 
 ### populate filter functions menu options
 
@@ -100,6 +106,8 @@ for name, func in zip(funcnames,funclist):
 def update():
     global chosen_file, chosen_channel, channel_list, chosen_palette, temp_nanonis, fwdbwdstring, t0
     global file_metadata_dict, enable_grid_view, active_files, active_files_dict
+    global contrast_high, contrast_low, first_update, max_slider_initial, min_slider_initial
+    
     
     message_text_output.value = "working ..."
     t0 = time.time()
@@ -144,6 +152,19 @@ def update():
         scan_image = imrotate(scan_image,angle)
         
         temp['image'] = [scan_image]
+
+        ##get contrast maxima
+        if first_update == True:
+            contrast_high = np.max(scan_image)
+            contrast_low = np.min(scan_image)
+            first_update = False
+        else:
+            if np.max(scan_image)>contrast_high:
+                contrast_high = np.max(scan_image)
+            if np.min(scan_image)<contrast_low:
+                contrast_low = np.min(scan_image)
+
+
                 
         #get the center for the image, nm
         xc, yc = temp_nanonis.header['scan_offset']
@@ -189,6 +210,17 @@ def update():
         else:
             circ_data.stream(circ_temp,rollover=1)
     
+    max_slider.start = contrast_low - .5*(contrast_high-contrast_low)
+    max_slider.end = contrast_high + .5*(contrast_high-contrast_low)
+    max_slider_initial = contrast_high
+    max_slider.step = (max_slider.end - max_slider.start)/100
+
+    min_slider.start = contrast_low - .5*(contrast_high-contrast_low)
+    min_slider.end = contrast_high + .5*(contrast_high-contrast_low)
+    min_slider_initial = contrast_low
+    min_slider.step = (max_slider.end - max_slider.start)/100
+    
+            
     t1 = time.time()
     message_text_output.value = "chammel data is update: " + str(t1-t0)
     
@@ -210,7 +242,7 @@ def image_callback(x_range, y_range, w, h):
     
     
     global colormap, active_files_dict, active_files, chosen_channel
-    global using_single_file_viewer
+    global using_single_file_viewer, contrast_high, contrast_low
     
     message_text_output.value = "downscaling..."
     
@@ -260,18 +292,7 @@ def image_callback(x_range, y_range, w, h):
             
             ds.stream(new_temp,rollover=len(active_files))
             
-#            try:
-#                if np.amax(new_temp['image'][0]) > colormapper.high:
-#                    colormapper.high = np.amax(new_temp['image'][0])
-#            except TypeError:
-#                colormapper.high = np.amax(new_temp['image'][0])
-#            try:    
-#                if np.amin(new_temp['image'][0]) < colormapper.low:
-#                    colormapper.low = np.amin(new_temp['image'][0])
-#            except TypeError:
-#                colormapper.low = np.amin(new_temp['image'][0])
 
-#            print(colormapper.high)
   
     message_text_output.value = "plot resolution is update"
     
@@ -284,7 +305,9 @@ def image_callback(x_range, y_range, w, h):
     
 def data_directory_text_handler(attr, old, new):
     global directory, files_list, chosen_file, channel_list, file_metadata_dict
-    global chosen_channel, t0, files_list_CBG, using_single_file_viewer
+    global chosen_channel, t0, files_list_CBG, using_single_file_viewer, first_update
+    
+    first_update = True
     
     message_text_output.value = "working ..."
     t0 = time.time()
@@ -335,10 +358,12 @@ def data_directory_text_handler(attr, old, new):
     
 
 def select_file_handler(attr,old,new):
-    global temp_nanonis, t0, header_source
+    global temp_nanonis, t0, header_source, first_update
     if new.endswith(".sxm") == False:
         return
     else:
+        
+        first_update = True
         
         message_text_output.value = "working ..."
         t0 = time.time()
@@ -404,15 +429,16 @@ def grid_view_handler(arg):
     update()
  
     
-def slider_callback(attr,old,new):
-    try:
-        colormapper.high = np.multiply(colormapper.high, max_slider.value)
-    except TypeError:
-        return
-    try:
-        colormapper.low = np.multiply(colormapper.low, min_slider.value)
-    except TypeError:
-        return
+def slider_callback_high(attr,old,new):
+    global contrast_high
+#    colormapper.high = np.multiply(contrast_high, new)
+    colormapper.high = new
+    
+def slider_callback_low(attr,old,new):
+    global contrast_low
+#    colormapper.low = np.multiply(contrast_low, new)
+    colormapper.low = new
+
     
     
     
@@ -463,10 +489,10 @@ apply_filters_menu = MultiSelect(title="Filters:", options=funcnames)
 
 #slider_dict = dict(start=0, end=1, value=1, step=.01)
 
-max_slider = Slider(start=.5, end=1.5, value=1, step=.01,
+max_slider = Slider(start=.5, end=1.5, value=max_slider_initial, step=.01,
                     title="% contrast max")
 
-min_slider = Slider(start=.5, end=1.5, value=1, step=.01,
+min_slider = Slider(start=.5, end=1.5, value=min_slider_initial, step=.01,
                     title="% contrast min")
 
 #button to switch between fwd/bwd scan
@@ -509,8 +535,8 @@ update_button.on_click(update)
 
 update_resolution.on_click(update_plot_ranges)
 
-max_slider.on_change("value", slider_callback)
-min_slider.on_change("value", slider_callback)
+max_slider.on_change("value", slider_callback_high)
+min_slider.on_change("value", slider_callback_low)
 
 ## single image viewer
 
