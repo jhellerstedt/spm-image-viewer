@@ -1,5 +1,5 @@
 # spm-image-viewer
-python/bokeh based spm image viewer
+python3 /bokeh based spm image viewer
 
 this is for viewing directories of sxm files simultaneously in real space
 
