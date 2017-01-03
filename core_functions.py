@@ -164,12 +164,15 @@ def update():
             if np.min(scan_image)<contrast_low:
                 contrast_low = np.min(scan_image)
 
-
+	 #get the image height/width
+        width, height = temp_nanonis.header['scan_range']
+        temp['dw'] = [width*1e9]
+        temp['dh'] = [height*1e9]
                 
         #get the center for the image, nm
         xc, yc = temp_nanonis.header['scan_offset']
-        temp['x'] = [xc*1e9]
-        temp['y'] = [yc*1e9]
+        temp['x'] = [(xc-width/2)*1e9]
+        temp['y'] = [(yc-height/2)*1e9]
 
         if enable_grid_view == True and len(active_files) > 1:
             temp['x'] = [125*np.mod(index,grid)]
@@ -179,10 +182,7 @@ def update():
             temp['x'] = [0.]
             temp['y'] = [0.]
     
-        #get the image height/width
-        width, height = temp_nanonis.header['scan_range']
-        temp['dw'] = [width*1e9]
-        temp['dh'] = [height*1e9]
+
 
         if enable_grid_view == True and len(active_files) > 1:
             temp['dw'] = [100]

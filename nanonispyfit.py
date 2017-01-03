@@ -11,6 +11,8 @@ import numpy as _np
 from scipy import optimize as _optimize
 
 
+### internal functions not loaded by core_functions:
+
 def _plane(a0, a1, b1, x0, y0):
     return lambda x,y: a0 +a1*(x-x0) +b1*(y-y0)
     
@@ -34,8 +36,19 @@ def _return_plane(params, data):
     _fit_data = _plane(*params)
     return _fit_data(*_np.indices(data.shape))
     
-def plane_fit_2d(scan_image):
-    return scan_image - _return_plane(_fitplane(scan_image),scan_image)
+    
+###externally visible functions loaded into gui:
     
 def no_filter(scan_image):
     return scan_image
+    
+def plane_fit_2d(scan_image):
+    return scan_image - _return_plane(_fitplane(scan_image),scan_image)
+    
+def line_fit(scan_image):
+    
+    return scan_image
+
+
+    
+    
