@@ -45,8 +45,12 @@ def no_filter(scan_image):
 def plane_fit_2d(scan_image):
     return scan_image - _return_plane(_fitplane(scan_image),scan_image)
     
-def line_fit(scan_image):
-    
+def row_line_fit(scan_image):
+    x = _np.arange(scan_image.shape[0])
+    for i in range(scan_image.shape[1]):
+        fit = _np.polyfit(x,scan_image[i,],1)
+        fit = _np.polyval(fit, x)
+        scan_image[i,] -= fit
     return scan_image
 
 
