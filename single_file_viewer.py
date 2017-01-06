@@ -14,7 +14,8 @@ index_buttons = cf.row(cf.file_forward_button, cf.file_backward_button)
 
 widgets = cf.column(
                     cf.message_text_output, 
-                    cf.data_directory_text_input, 
+                    cf.data_directory_text_input,
+                    cf.refresh_directory_button,
                     cf.select_file, 
                     index_buttons, 
                     cf.select_channel, 

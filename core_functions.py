@@ -262,8 +262,14 @@ def image_callback(x_range, y_range, w, h):
         dont_resend = False
         if using_single_file_viewer == False:
             ## downsample the image to only push necessary pixels to plot: 
-            if temp['x'][0]-temp['dw'][0]/2 <= x_range[1] and temp['x'][0]+temp['dw'][0]/2 >= x_range[0] and temp['y'][0]-temp['dh'][0]/2 <= y_range[1] and temp['y'][0]+temp['dh'][0]/2 >= y_range[0]:
-                if temp['dw'][0]<np.abs(x_range[1]-x_range[0]) and temp['dh'][0]<np.abs(y_range[1]-y_range[0]):
+            if (temp['x'][0]-temp['dw'][0]/2 <= x_range[1] and 
+                temp['x'][0]+temp['dw'][0]/2 >= x_range[0] and 
+                temp['y'][0]-temp['dh'][0]/2 <= y_range[1] and 
+                temp['y'][0]+temp['dh'][0]/2 >= y_range[0]):
+                
+                if (temp['dw'][0]<np.abs(x_range[1]-x_range[0]) and 
+                    temp['dh'][0]<np.abs(y_range[1]-y_range[0])):
+                    
                     xpixels = np.floor(temp['dw'][0]*w/np.abs(x_range[1]-x_range[0]))
                     ypixels = np.floor(temp['dh'][0]*h/np.abs(y_range[1]-y_range[0]))
                     if xpixels<2 and ypixels < 2:
@@ -438,6 +444,27 @@ def slider_callback_low(attr,old,new):
     global contrast_low
 #    colormapper.low = np.multiply(contrast_low, new)
     colormapper.low = new
+    
+def refresh_directory():
+    global files_list_CBG
+#    data_directory_text_handler("value", old=data_directory_text_input.value, new=data_directory_text_input.value)
+    temp_files_list = os.listdir(data_directory_text_input.value)
+    full_list = [os.path.join(data_directory_text_input.value,i) for i in temp_files_list]
+    time_sorted_list = sorted(full_list, key=os.path.getmtime)
+    temp_files_list = [os.path.basename(i) for i in time_sorted_list]
+    
+    for i in temp_files_list:
+        if i.endswith(".sxm"):
+            if not (i in files_list_CBG):
+                files_list_CBG.append(i)
+                filename = data_directory_text_input.value + "/" + i
+                file_metadata_dict[i] = nap.read.Scan(filename)
+        
+                for j in list(file_metadata_dict[i].signals.keys()):
+                    if not (j in select_channel.options):
+                        select_channel.options.append(j)
+        
+    select_file_CBG.labels = files_list_CBG
 
     
     
@@ -447,6 +474,10 @@ def slider_callback_low(attr,old,new):
 message_text_output = TextInput(title="messages displayed here:",value="nothing yet")
 
 data_directory_text_input = TextInput(value=os.getcwd(), title="directory to read data:")
+
+#button to update directory
+
+refresh_directory_button = Button(label="refresh files", button_type="default")
 
     
 #select input of which file to display
@@ -520,6 +551,8 @@ header_display = DataTable(source=header_source, columns=header_columns, fit_col
 ##all_image
 
 data_directory_text_input.on_change("value", data_directory_text_handler)
+
+refresh_directory_button.on_click(refresh_directory)
 
 #select_channel.on_change('value', select_channel_handler)
 

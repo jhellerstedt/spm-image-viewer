@@ -14,7 +14,8 @@ cf.set_single_file_viewer_flag(False)
 
 widgets = cf.column(
                     cf.message_text_output, 
-                    cf.data_directory_text_input, 
+                    cf.data_directory_text_input,
+                    cf.refresh_directory_button,
                     cf.select_all_button, 
                     cf.grid_view_button, 
                     cf.select_channel, 
