@@ -341,6 +341,8 @@ def data_directory_text_handler(attr, old, new):
     
     file_metadata_dict = dict()
     
+    select_channel.options = []
+    
     for i in files_list_CBG:
         
         filename = new + "/" + i
@@ -452,6 +454,8 @@ def refresh_directory():
     full_list = [os.path.join(data_directory_text_input.value,i) for i in temp_files_list]
     time_sorted_list = sorted(full_list, key=os.path.getmtime)
     temp_files_list = [os.path.basename(i) for i in time_sorted_list]
+    
+    select_channel.options = []
     
     for i in temp_files_list:
         if i.endswith(".sxm"):
