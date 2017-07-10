@@ -28,7 +28,8 @@ def on_session_destroyed(session_context):
         with open(port_filename, 'rb') as pickle_file:
             open_ports = pickle.load(pickle_file)
             pickle_file.close()
-        port = bokeh.Server.port
+        print(open_ports)
+        port = bokeh.server.port()
         print(port)
         open_ports.remove(port)
         print(open_ports)
