@@ -23,10 +23,15 @@ def on_session_created(session_context):
 
 def on_session_destroyed(session_context):
     try:
-        open_ports = pickle.load(open_ports.p)
+        port_filename = os.getcwd() + "/open_ports.p"
+        with open(port_filename, 'rb') as pickle_file:
+            open_ports = pickle.load(pickle_file)
+            pickle_file.close()
         port = bokeh.Server.port
-        open_ports.remote(port)
-        pickle.dump(open_ports, open_ports.p)
+        open_ports.remove(port)
+        with open(port_filename, 'wb') as pickle_file:
+            pickle.dump(open_ports, pickle_file)
+            pickle_file.close()
     except:
         print("port not excised from open_ports")
     pid = os.getpid()
