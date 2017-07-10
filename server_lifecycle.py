@@ -11,6 +11,7 @@ import core_functions as cf
 import os
 import signal
 import pickle
+import psutil
 
 def on_server_loaded(server_context):
     pass
@@ -22,6 +23,7 @@ def on_session_created(session_context):
     pass
 
 def on_session_destroyed(session_context):
+    pid = os.getpid()
     try:
         port_filename = os.getcwd() + "/spm-image-viewer/open_ports.p"
         print(port_filename)
@@ -29,7 +31,7 @@ def on_session_destroyed(session_context):
             open_ports = pickle.load(pickle_file)
             pickle_file.close()
         print(open_ports)
-        port = bokeh.server.port()
+        port = psutil.Process(pid).connections()[0].laddr[1]
         print(port)
         open_ports.remove(port)
         print(open_ports)
@@ -38,6 +40,6 @@ def on_session_destroyed(session_context):
             pickle_file.close()
     except:
         print("port not excised from open_ports")
-    pid = os.getpid()
+    
     os.kill(pid, signal.SIGTERM)
     return
