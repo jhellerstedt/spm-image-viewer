@@ -26,15 +26,11 @@ def on_session_destroyed(session_context):
     pid = os.getpid()
     try:
         port_filename = os.getcwd() + "/spm-image-viewer/open_ports.p"
-        print(port_filename)
         with open(port_filename, 'rb') as pickle_file:
             open_ports = pickle.load(pickle_file)
             pickle_file.close()
-        print(open_ports)
         port = psutil.Process(pid).connections()[0].laddr[1]
-        print(port)
         open_ports.remove(port)
-        print(open_ports)
         with open(port_filename, 'wb') as pickle_file:
             pickle.dump(open_ports, pickle_file)
             pickle_file.close()
