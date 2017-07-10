@@ -477,7 +477,7 @@ def refresh_directory():
     
 message_text_output = TextInput(title="messages displayed here:",value="nothing yet")
 
-data_directory_text_input = TextInput(value=os.getcwd(), title="directory to read data:", width=400)
+data_directory_text_input = TextInput(value=os.getcwd(), title="directory to read data:", width=800)
 
 #button to update directory
 
