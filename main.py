@@ -13,8 +13,7 @@ cf.set_single_file_viewer_flag(False)
 ### set up layout
 
 widgets = cf.column(
-                    cf.message_text_output, 
-                    cf.data_directory_text_input,
+                    cf.message_text_output,
                     cf.refresh_directory_button,
                     cf.select_all_button, 
                     cf.grid_view_button, 
@@ -28,7 +27,7 @@ widgets = cf.column(
                     cf.min_slider,
                     )
 main_row = cf.row(cf.select_file_CBG, cf.p, widgets)
-layout = cf.column(main_row)
+layout = cf.column(cf.data_directory_text_input, main_row)
 
 
 
