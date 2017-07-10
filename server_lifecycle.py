@@ -23,7 +23,7 @@ def on_session_created(session_context):
 
 def on_session_destroyed(session_context):
     try:
-        port_filename = os.getcwd() + "/open_ports.p"
+        port_filename = os.getcwd() + "/spm-image-viewer/open_ports.p"
         print(port_filename)
         with open(port_filename, 'rb') as pickle_file:
             open_ports = pickle.load(pickle_file)
