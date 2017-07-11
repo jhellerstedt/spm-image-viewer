@@ -7,12 +7,13 @@ Created on Wed Dec 28 22:42:40 2016
 """
 
 import core_functions as cf
+from bokeh.layouts import widgetbox
 
 cf.set_single_file_viewer_flag(False)
 
 ### set up layout
 
-widgets = cf.column(
+widgets = widgetbox(
                     cf.message_text_output,
                     cf.refresh_directory_button,
                     cf.select_all_button, 
@@ -27,7 +28,7 @@ widgets = cf.column(
                     cf.min_slider,
                     )
 main_row = cf.row(cf.select_file_CBG, cf.p, widgets)
-layout = cf.column(cf.data_directory_text_input, main_row)
+layout = cf.column(widgetbox(cf.data_directory_text_input, width=800), main_row)
 
 
 
