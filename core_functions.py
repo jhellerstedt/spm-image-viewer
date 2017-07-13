@@ -135,8 +135,7 @@ def update():
                     scan_image = temp_nanonis.signals[select_channel.value][fwdbwdstring]
                 else:
                     scan_image = np.fliplr(temp_nanonis.signals[select_channel.value][fwdbwdstring])
-        except e:
-            print(e)
+        except:
             scan_image = np.zeros(temp_nanonis.header['scan_pixels'])
         
         ### remove NaNs from the image
