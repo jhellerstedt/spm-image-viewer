@@ -124,16 +124,20 @@ def update():
         
         temp_nanonis = file_metadata_dict[x]
         
-        if temp_nanonis.header['scan_dir'] == 'down':
-            if fwdbwdstring == 'forward':
-                scan_image = np.flipud(temp_nanonis.signals[select_channel.value][fwdbwdstring])
+        try:        
+            if temp_nanonis.header['scan_dir'] == 'down':
+                if fwdbwdstring == 'forward':
+                    scan_image = np.flipud(temp_nanonis.signals[select_channel.value][fwdbwdstring])
+                else:
+                    scan_image = np.fliplr(np.flipud(temp_nanonis.signals[select_channel.value][fwdbwdstring]))
             else:
-                scan_image = np.fliplr(np.flipud(temp_nanonis.signals[select_channel.value][fwdbwdstring]))
-        else:
-            if fwdbwdstring == 'forward':
-                scan_image = temp_nanonis.signals[select_channel.value][fwdbwdstring]
-            else:
-                scan_image = np.fliplr(temp_nanonis.signals[select_channel.value][fwdbwdstring])
+                if fwdbwdstring == 'forward':
+                    scan_image = temp_nanonis.signals[select_channel.value][fwdbwdstring]
+                else:
+                    scan_image = np.fliplr(temp_nanonis.signals[select_channel.value][fwdbwdstring])
+        except e:
+            print(e)
+            scan_image = np.zeros(temp_nanonis.header['scan_pixels'])
         
         ### remove NaNs from the image
         scan_image[np.isnan(scan_image)] = np.mean(scan_image[~np.isnan(scan_image)])
