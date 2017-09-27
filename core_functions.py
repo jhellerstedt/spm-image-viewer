@@ -125,7 +125,7 @@ def update():
         temp_nanonis = file_metadata_dict[x]
         
         try:        
-            if temp_nanonis.header['scan_dir'] == 'up':
+            if temp_nanonis.header['scan_dir'] == 'down':
                 if fwdbwdstring == 'forward':
                     scan_image = np.flipud(temp_nanonis.signals[select_channel.value][fwdbwdstring])
                 else:
@@ -146,7 +146,7 @@ def update():
             scan_image = filter_dictionary[i](scan_image)
         
         #get the image scan angle (degrees)
-        angle = -float(temp_nanonis.header['scan_angle'])
+        angle = float(temp_nanonis.header['scan_angle'])
         
         #don't rotate the image if working in grid mode/ only looking at one image:
         if enable_grid_view == True or len(active_files) < 2:
