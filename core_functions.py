@@ -358,7 +358,8 @@ def data_directory_text_handler(attr, old, new):
         except:
             message_text_output.value = "bad file: ..." + str(i[-7:])
     
-    select_channel.value = select_channel.options[0]
+    if len(select_channel.options) > 0:
+        select_channel.value = select_channel.options[0]
 
         
     t1 = time.time()
