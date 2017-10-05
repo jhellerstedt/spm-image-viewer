@@ -349,11 +349,14 @@ def data_directory_text_handler(attr, old, new):
     for i in files_list_CBG:
         
         filename = new + "/" + i
-        file_metadata_dict[i] = nap.read.Scan(filename)
+        try:
+            file_metadata_dict[i] = nap.read.Scan(filename)
         
-        for j in list(file_metadata_dict[i].signals.keys()):
-            if not (j in select_channel.options):
-                select_channel.options.append(j)
+            for j in list(file_metadata_dict[i].signals.keys()):
+                if not (j in select_channel.options):
+                    select_channel.options.append(j)
+        except:
+            message_text_output.value = "bad file: ..." + str(i[-7:])
     
     select_channel.value = select_channel.options[0]
 
@@ -465,11 +468,14 @@ def refresh_directory():
             if not (i in files_list_CBG):
                 files_list_CBG.append(i)
                 filename = data_directory_text_input.value + "/" + i
-                file_metadata_dict[i] = nap.read.Scan(filename)
+                try:
+                    file_metadata_dict[i] = nap.read.Scan(filename)
         
-                for j in list(file_metadata_dict[i].signals.keys()):
-                    if not (j in select_channel.options):
-                        select_channel.options.append(j)
+                    for j in list(file_metadata_dict[i].signals.keys()):
+                        if not (j in select_channel.options):
+                            select_channel.options.append(j)
+                except:
+                    message_text_output.value = "bad file: ..." + str(i[-7:])
         
     select_file_CBG.labels = files_list_CBG
 
