@@ -472,10 +472,10 @@ def refresh_directory():
     for i in temp_files_list:
         if i.endswith(".sxm"):
             if not (i in files_list_CBG):
-                files_list_CBG.append(i)
-                filename = data_directory_text_input.value + "/" + i
                 try:
+                    filename = data_directory_text_input.value + "/" + i            
                     file_metadata_dict[i] = nap.read.Scan(filename)
+                    files_list_CBG.append(i)
         
                     for j in list(file_metadata_dict[i].signals.keys()):
                         if not (j in select_channel.options):
