@@ -334,7 +334,12 @@ def data_directory_text_handler(attr, old, new):
     files_list_CBG = list()
     for i in temp_files_list:
         if i.endswith(".sxm"):
-            files_list_CBG.append(i)
+            try:
+                filename = new + "/" + i
+                d = nap.read.Scan(filename)
+                files_list_CBG.append(i)
+            except:
+                pass
     select_file_CBG.labels = files_list_CBG
     select_file_CBG.active = list(range(len(files_list_CBG)))
     
