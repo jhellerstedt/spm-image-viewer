@@ -332,14 +332,19 @@ def data_directory_text_handler(attr, old, new):
     temp_files_list = [os.path.basename(i) for i in time_sorted_list]
                        
     files_list_CBG = list()
+    filelist_numbers = []
     for i in temp_files_list:
         if i.endswith(".sxm"):
             try:
                 filename = new + "/" + i
                 d = nap.read.Scan(filename)
                 files_list_CBG.append(i)
+                filelist_numbers.append(i[-7:-4])
             except:
                 pass
+    sorted_indices = np.argsort(filelist_numbers)
+    files_list_CBG = [files_list_CBG[ii] for ii in sorted_indices]            
+    
     select_file_CBG.labels = files_list_CBG
     select_file_CBG.active = list(range(len(files_list_CBG)))
     
