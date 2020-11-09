@@ -42,8 +42,27 @@ def _return_plane(params, data):
 def no_filter(scan_image):
     return scan_image
     
-def plane_fit_2d(scan_image):
-    return scan_image - _return_plane(_fitplane(scan_image),scan_image)
+def plane_fit_2d(scan_image, region=None):
+    '''
+    Parameters
+    ----------
+    scan_image : 2d array
+        image to be plane fit.
+    region : list of 2 tuples, optional
+        pass region of image to plane fit: [(x1, y1), (x2, y2)]
+
+    Returns
+    -------
+    TYPE
+        plane-subtracted image array
+
+    '''
+    if region == None:
+        return scan_image - _return_plane(_fitplane(scan_image),scan_image)
+    else:
+        scan_fit_area = scan_image[region[0][0]:region[1][0], region[0][1]:region[1][1]]
+        return scan_image - _return_plane(_fitplane(scan_fit_area), scan_image)
+    
     
 def row_line_fit(scan_image):
     x = _np.arange(scan_image.shape[0])
